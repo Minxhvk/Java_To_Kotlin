@@ -10,8 +10,10 @@ import com.group.libraryapp.util.findByIdOrThrow
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.bind.annotation.RestController
 
 @Service
+@RestController
 class UserService(
     private val userRepository: UserRepository
 ) {

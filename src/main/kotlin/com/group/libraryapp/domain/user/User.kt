@@ -2,6 +2,7 @@ package com.group.libraryapp.domain.user
 
 import com.group.libraryapp.domain.book.Book
 import com.group.libraryapp.domain.user.loanhistory.UserLoanHistory
+import com.group.libraryapp.domain.user.loanhistory.UserLoanStatus
 import java.lang.IllegalArgumentException
 import javax.persistence.CascadeType
 import javax.persistence.Entity
@@ -36,7 +37,7 @@ class User constructor(
     }
 
     fun loanBook(book: Book) {
-        this.userLoanHistories.add(UserLoanHistory(this, book.name, false))
+        this.userLoanHistories.add(UserLoanHistory(this, book.name, UserLoanStatus.LOANED))
     }
 
     fun returnBook(bookName: String) {

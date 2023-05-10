@@ -15,7 +15,7 @@ class UserController(
     private val userService: UserService,
 ) {
 
-    @PostMapping("/user")
+    @PostMapping("/user/save")
     fun saveUser(@RequestBody request: UserCreateRequest) {
         userService.saveUser(request)
     }
@@ -25,7 +25,7 @@ class UserController(
         return userService.getUsers()
     }
 
-    @PostMapping("/user")
+    @PostMapping("/user/update")
     fun updateUserName(@RequestBody request: UserUpdateRequest) {
         userService.updateUserName(request)
     }

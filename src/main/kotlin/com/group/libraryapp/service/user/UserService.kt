@@ -2,8 +2,11 @@ package com.group.libraryapp.service.user
 
 import com.group.libraryapp.domain.user.User
 import com.group.libraryapp.domain.user.UserRepository
+import com.group.libraryapp.domain.user.loanhistory.UserLoanStatus
 import com.group.libraryapp.dto.user.request.UserCreateRequest
 import com.group.libraryapp.dto.user.request.UserUpdateRequest
+import com.group.libraryapp.dto.user.response.BookHistoryResponse
+import com.group.libraryapp.dto.user.response.UserLoanHistoryResponse
 import com.group.libraryapp.dto.user.response.UserResponse
 import com.group.libraryapp.util.fail
 import com.group.libraryapp.util.findByIdOrThrow
@@ -38,9 +41,14 @@ class UserService(
 
     @Transactional
     fun updateUserName(request: UserUpdateRequest) {
-//        val user = userRepository.findById(request.id).orElseThrow(::IllegalArgumentException) 1단계. orElseThrow
-//        val user = userRepository.findByIdOrNull(request.id) ?: fail() 2단계. findByIdIrNull, ?:
-//        3단계. 확장함수 구현
+
+        // 1단계. orElseThrow
+        // val user = userRepository.findById(request.id).orElseThrow(::IllegalArgumentException)
+
+        // 2단계. findByIdIrNull, ?:
+        // val user = userRepository.findByIdOrNull(request.id) ?: fail()
+
+        // 3단계. 확장함수 구현
         val user = userRepository.findByIdOrThrow(request.id)
         user.updateName(request.name)
     }
@@ -49,6 +57,22 @@ class UserService(
     fun deleteUser(name: String) {
         val user = userRepository.findByName(name) ?: fail()
         userRepository.delete(user)
+    }
+
+    @Transactional(readOnly = true)
+    fun getUserLoanHistories(): List<UserLoanHistoryResponse> {
+        return userRepository.findAll().map { user ->
+            UserLoanHistoryResponse(
+                name = user.name,
+                books = user.userLoanHistories.map { history ->
+                    BookHistoryResponse(
+                        name = history.bookName,
+                        isReturn = history.status == UserLoanStatus.RETURNED
+                    )
+
+                }
+            )
+        }
     }
 
 }

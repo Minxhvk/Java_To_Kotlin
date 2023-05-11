@@ -10,7 +10,6 @@ import com.group.libraryapp.dto.user.response.UserLoanHistoryResponse
 import com.group.libraryapp.dto.user.response.UserResponse
 import com.group.libraryapp.util.fail
 import com.group.libraryapp.util.findByIdOrThrow
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.RestController
@@ -61,7 +60,7 @@ class UserService(
 
     @Transactional(readOnly = true)
     fun getUserLoanHistories(): List<UserLoanHistoryResponse> {
-        return userRepository.findAll().map { user ->
+        return userRepository.findAllWithHistories().map { user ->
             UserLoanHistoryResponse(
                 name = user.name,
                 books = user.userLoanHistories.map { history ->
@@ -69,7 +68,6 @@ class UserService(
                         name = history.bookName,
                         isReturn = history.status == UserLoanStatus.RETURNED
                     )
-
                 }
             )
         }

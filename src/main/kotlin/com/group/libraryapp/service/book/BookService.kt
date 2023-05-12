@@ -43,19 +43,24 @@ class BookService(
         user.returnBook(request.bookName)
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     fun countLoanBook(): Int {
-        return userLoanHistoryRepository.findAllByStatus(UserLoanStatus.LOANED).size
+        // UserLoanHistory 객체가 아닌 Long 값만 받으므로 메모리 사용 및 부하를 줄일 수 있다.
+        return userLoanHistoryRepository.countByStatus(UserLoanStatus.LOANED).toInt()
     }
 
     @Transactional(readOnly = true)
     fun getBookStatistics(): List<BookStatResponse> {
-        return bookRepository.findAll() // List<Book>
-            .groupBy { book -> book.type } // Map<BookType, List<Book>>
-            .map { (type, books) -> BookStatResponse(type, books.size) } // List<BookStatResponse>
+//        V.3 서버 부하 줄이기
+        return bookRepository.getStats()
+
+//        V.2 null 및 가변 인자들을 직접 컨트롤하는 것이 아닌, 컨트롤하지 못하게. -> 실수를 줄인다.
+//        return bookRepository.findAll() // List<Book>
+//            .groupBy { book -> book.type } // Map<BookType, List<Book>>
+//            .map { (type, books) -> BookStatResponse(type, books.size) } // List<BookStatResponse>
 
 
-
+//        V.1
 //        val results = mutableListOf<BookStatResponse>()
 //        val books = bookRepository.findAll()
 //
